@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NilakaSin EduHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a serious, encouraging coaching hub for Indian one-day and engineering exams
+   IDEA: the OMR answer sheet: red-ruled paper, inked bubbles, a ticking exam clock
+   PICTURE: a live OMR card filling itself beside a GATE countdown; the mock test is a real OMR
+   COLOUR and TYPE: OMR red, exam-ink blue, paper white, highlighter yellow; Archivo + Inter
+   LAYOUT: sticky top nav, hash-routed pages (home, each exam, mock, papers), stacks under 600px */
+:root{color-scheme:light dark;--bg:light-dark(#fffdf8,#0f1424);--paper:light-dark(#fff,#161d33);--ink:light-dark(#141b3a,#e9ecf7);--mut:light-dark(#5a6180,#a3aac4);--blue:light-dark(#1f3fa8,#7f9cff);--red:light-dark(#d4304b,#ff6b82);--redl:light-dark(#fbe3e7,#3a1c25);--yel:#ffd43b;--grn:light-dark(#178a4c,#4ad18a);--line:light-dark(#efc9d0,#3a3150);--soft:light-dark(#f4f6ff,#1c2440)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Archivo,Inter,sans-serif;line-height:1.08;text-wrap:balance;margin:0}
+h2{font-size:clamp(28px,4vw,40px)}h3{font-size:19px}
+a{color:var(--blue)}
+.band{padding:clamp(28px,4vw,56px) max(5vw,16px)}.wrap{max-width:1240px;margin:0 auto}
+.fig{position:relative;min-height:340px}
+pre,.scroll{overflow-x:auto}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+/* nav */
+header{position:sticky;top:0;z-index:20;background:var(--blue);color:#fff}
+.nav{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px max(5vw,16px);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;margin-right:auto}
+.brand svg{flex:none}
+.brand b{font:900 21px Archivo;display:block;line-height:1}
+.brand small{font-size:12px;opacity:.8}
+.links{display:flex;gap:4px;flex-wrap:wrap}
+.links a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600;font-size:15px;min-height:40px;display:flex;align-items:center}
+.links a:hover,.links a.on{background:#ffffff26}
+.links a.on{box-shadow:inset 0 -3px 0 var(--yel)}
+.clock{font:600 13px Inter;background:#0002;padding:6px 10px;border-radius:8px;white-space:nowrap}
+/* hero */
+.hero{background:var(--paper);border-bottom:3px solid var(--red);background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px)}
+.hgrid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.hi{font:600 18px 'Noto Sans Devanagari',sans-serif;color:var(--red)}
+.hero h1{font-size:clamp(34px,5vw,52px);margin:10px 0 14px}
+.hero p{max-width:60ch;color:var(--mut);font-size:17px}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{border:0;border-radius:10px;padding:12px 20px;font-weight:700;min-height:46px;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn.p{background:var(--red);color:#fff}.btn.s{background:var(--soft);color:var(--blue)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.omr{background:var(--paper);border:2px solid var(--red);border-radius:14px;padding:18px;box-shadow:10px 10px 0 var(--redl)}
+.omr-h{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--red);padding-bottom:8px;margin-bottom:12px;color:var(--red);font:700 13px Archivo;gap:10px;flex-wrap:wrap}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;text-align:center}
+.cd div{background:var(--soft);border-radius:8px;padding:8px 2px}
+.cd b{font:900 clamp(22px,3vw,30px) Archivo;color:var(--blue);display:block;font-variant-numeric:tabular-nums}
+.cd span{font-size:12px;color:var(--mut)}
+.rows{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 18px}
+.row{display:flex;align-items:center;gap:7px;font:600 12px Inter;color:var(--red)}
+.row i{width:18px;text-align:right;font-style:normal}
+.bub{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--red);display:grid;place-items:center;font-size:9px;transition:background .3s}
+.bub.f{background:var(--ink);border-color:var(--ink);color:transparent}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px}
+.ex{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:8px;transition:transform .2s,box-shadow .2s}
+.ex:hover{transform:translateY(-3px);box-shadow:0 10px 24px #1f3fa822}
+.ex .tg{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--soft);color:var(--blue);white-space:nowrap}
+.chip.r{background:var(--redl);color:var(--red)}
+.qod{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:28px;align-items:start}
+.opts{display:grid;gap:8px;margin-top:12px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;min-height:46px;color:var(--ink)}
+.opt .bub{flex:none;width:24px;height:24px;font-size:12px;color:var(--red)}
+.opt.sel .bub{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.opt.ok{border-color:var(--grn);background:color-mix(in srgb,var(--grn) 12%,var(--paper))}
+.opt.no{border-color:var(--red);background:var(--redl)}
+.exp{margin-top:12px;padding:12px 14px;border-left:4px solid var(--yel);background:var(--soft);border-radius:6px;font-size:15px}
+.search{width:100%;font-size:16px;padding:12px 16px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);min-height:48px}
+.hits{margin-top:10px;display:grid;gap:8px;max-height:360px;overflow:auto}
+.hit{padding:10px 12px;border-radius:8px;background:var(--soft);font-size:14px}.hit b{display:block}
+/* exam page */
+.ehead{background:var(--blue);color:#fff}
+.ehead p{opacity:.85;max-width:65ch}
+.ehead .chip{background:#ffffff26;color:#fff}
+.two{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}
+table{width:100%;border-collapse:collapse;font-size:15px;background:var(--paper)}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:700 13px Archivo;color:var(--red);background:var(--redl)}
+td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:var(--mut);margin-top:8px}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.notes .card h3{margin-bottom:8px;color:var(--blue)}
+.notes ul{margin:0;padding-left:18px;font-size:15px}.notes li{margin:4px 0}
+code{font-family:ui-monospace,monospace;background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+/* mock */
+.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:end}
+label.f{display:grid;gap:6px;font-weight:600;font-size:14px}
+select{font-size:16px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);min-height:46px}
+.test{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:start}
+.qbox{background:var(--paper);border:2px solid var(--red);border-radius:14px;padding:22px}
+.qtop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:600;color:var(--mut);font-size:14px;margin-bottom:10px}
+.qtext{font-size:18px;font-weight:600}
+.side{position:sticky;top:84px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px}
+.timer{font:900 34px Archivo;color:var(--blue);font-variant-numeric:tabular-nums;text-align:center}
+.timer.low{color:var(--red);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.4}}
+.prog{height:8px;background:var(--soft);border-radius:4px;overflow:hidden;margin:10px 0}.prog i{display:block;height:100%;background:var(--grn);transition:width .3s}
+.pal{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
+.pal button{aspect-ratio:1;border-radius:50%;border:1.5px solid var(--red);background:var(--paper);color:var(--red);font-weight:700;font-size:13px;min-height:36px}
+.pal button.a{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pal button.m{background:var(--yel);border-color:#b8900b;color:#141b3a}
+.pal button.c{outline:3px solid var(--blue);outline-offset:1px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mut)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px;background:var(--c);border:1px solid var(--red)}
+.qnav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:18px 0}
+.res div{background:var(--soft);border-radius:12px;padding:14px}
+.res b{font:900 30px Archivo;display:block;color:var(--blue);white-space:nowrap}
+.res span{font-size:13px;color:var(--mut)}
+.rev{display:grid;gap:12px}
+.rev .card{border-left:5px solid var(--c)}
+.empty{text-align:center;color:var(--mut);padding:30px}
+footer{background:var(--ink);color:var(--bg);font-size:14px}
+footer a{color:var(--yel)}
+.fgrid{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+[hidden]{display:none!important}
+@media(max-width:860px){.hgrid,.qod,.two,.test{grid-template-columns:1fr}.side{position:static}}
+@media(max-width:600px){.links{width:100%;overflow-x:auto;flex-wrap:nowrap}.links a{flex:none}.clock{display:none}table{font-size:13px}.rows{grid-template-columns:1fr 1fr;gap:4px 8px}.bub{width:15px;height:15px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#home" aria-label="NilakaSin EduHub home">
+      <svg width="38" height="38" viewBox="0 0 38 38" aria-hidden="true"><circle cx="19" cy="19" r="17" fill="#fff"/><circle cx="19" cy="19" r="10" fill="none" stroke="#d4304b" stroke-width="2.5"/><circle cx="19" cy="19" r="5.5" fill="#141b3a"/></svg>
+      <span><b>NilakaSin EduHub</b><small>nilakasin.edu.hub</small></span>
+    </a>
+    <div class="links" id="links">
+      <a href="#home">Home</a><a href="#railway">Railway</a><a href="#ssc">SSC</a><a href="#je-ae">JE / AE</a><a href="#gate">GATE</a><a href="#mock">Mock test</a><a href="#papers">Previous papers</a>
+    </div>
+    <span class="clock" id="clock" aria-live="off">IST --:--:--</span>
+  </nav>
+</header>
+
+<main>
+<!-- HOME -->
+<section data-v="home">
+  <div class="hero band"><div class="wrap hgrid">
+    <div>
+      <div class="hi">सही तैयारी, पक्का चयन</div>
+      <h1>Railway, SSC, JE/AE and GATE prep, in one place</h1>
+      <p>NilakaSin EduHub, run by Nilesh Prakash Singh, brings you exam patterns, revision notes, a question of the day, timed mock tests with real negative marking, and official sources for previous year papers.</p>
+      <div class="cta"><a class="btn p" href="#mock">Start a timed mock test</a><a class="btn s" href="#papers">Previous papers</a></div>
+    </div>
+    <div class="omr" aria-label="Countdown to GATE 2027">
+      <div class="omr-h"><span>GATE 2027 · first exam day 6 Feb 2027</span><span>IIT Madras</span></div>
+      <div class="cd" id="cd"><div><b>--</b><span>days</span></div><div><b>--</b><span>hours</span></div><div><b>--</b><span>min</span></div><div><b>--</b><span>sec</span></div></div>
+      <div class="rows" id="omrdemo"></div>
+    </div>
+  </div></div>
+
+  <div class="band"><div class="wrap">
+    <h2>Choose your exam</h2>
+    <div class="grid" style="margin-top:20px" id="excards"></div>
+  </div></div>
+
+  <div class="band" style="background:var(--soft)"><div class="wrap qod">
+    <div>
+      <h2>Question of the day</h2>
+      <p style="color:var(--mut)">A new question every day, picked by date. Mark your bubble and check the answer.</p>
+      <h3 style="margin-top:26px">Search notes and questions</h3>
+      <input class="search" id="q" type="search" placeholder="Try: Carnot, simple interest, Article 21, slump" aria-label="Search notes and questions">
+      <div class="hits" id="hits"></div>
+    </div>
+    <div class="card" id="qod"></div>
+  </div></div>
+</section>
+
+<!-- EXAM PAGES -->
+<section data-v="exam" hidden>
+  <div class="ehead band"><div class="wrap">
+    <div class="tg" id="etags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    <h2 id="ename" style="margin:12px 0 8px;font-size:clamp(32px,4.5vw,48px)"></h2>
+    <p id="edesc"></p>
+    <div class="cta"><button class="btn p" id="epractice">Practise 10 questions now</button></div>
+  </div></div>
+  <div class="band"><div class="wrap two">
+    <div>
+      <h2 style="font-size:28px;margin-bottom:14px">Exam pattern</h2>
+      <div id="epat"></div>
+      <p class="note">Patterns are from recent notifications and can change. Always confirm in the latest official notification.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:10px">Syllabus at a glance</h3>
+      <div id="esyl" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      <h3 style="margin:18px 0 8px">Official website</h3>
+      <div id="eoff"></div>
+    </div>
+  </div></div>
+  <div class="band" style="background:var(--soft)"><div class="wrap">
+    <h2 style="font-size:28px;margin-bottom:16px">Key knowledge and formulas</h2>
+    <div class="notes" id="enotes"></div>
+  </div></div>
+</section>
+
+<!-- MOCK -->
+<section data-v="mock" hidden>
+  <div class="band"><div class="wrap">
+    <h2>Timed mock test</h2>
+    <p style="color:var(--mut);max-width:65ch">Pick an exam. The timer, palette and score run live, and each exam uses its own negative marking. Your best scores stay in this browser.</p>
+    <div class="card" id="setup" style="margin-top:18px">
+      <div class="setup">
+        <label class="f">Exam<select id="mex"></select></label>
+        <label class="f">Questions<select id="mn"><option>10</option><option selected>15</option><option>20</option><option value="999">All available</option></select></label>
+        <label class="f">Time per question<select id="mt"><option value="36">36 s (SSC pace)</option><option value="54" selected>54 s (Railway pace)</option><option value="90">90 s (relaxed)</option></select></label>
+        <button class="btn p" id="mstart">Start test</button>
+      </div>
+      <p class="note" id="mneg"></p>
+      <div id="best" class="note"></div>
+    </div>
+    <div id="test" hidden></div>
+    <div id="result" hidden></div>
+  </div></div>
+</section>
+
+<!-- PAPERS -->
+<section data-v="papers" hidden>
+  <div class="band"><div class="wrap">
+    <h2>Previous year papers</h2>
+    <p style="color:var(--mut);max-width:70ch">The genuine previous year papers and answer keys are published by the exam bodies themselves. Use these official sources, then practise below in the same style.</p>
+    <div class="scroll" style="margin-top:18px"><table class="stack">
+      <thead><tr><th>Exam</th><th>Where official papers and keys are published</th><th>Link</th></tr></thead>
+      <tbody id="ptab"></tbody>
+    </table></div>
+    <p class="note">The GATE site changes every year with the organising IIT, so older GATE papers sit on that year's site.</p>
+    <h2 style="font-size:28px;margin:36px 0 14px">Previous-year style practice sets</h2>
+    <p style="color:var(--mut);max-width:70ch">These sets are written by NilakaSin EduHub in the style and level of past papers. They are practice questions, not reproductions of official papers.</p>
+    <div class="grid" id="psets" style="margin-top:16px"></div>
+  </div></div>
+</section>
+</main>
+
+<footer class="band"><div class="wrap fgrid">
+  <div><b style="font:900 20px Archivo">NilakaSin EduHub</b><br>nilakasin.edu.hub · run by Nilesh Prakash Singh</div>
+  <div>Exam dates and patterns change. Check <a href="https://ssc.gov.in">ssc.gov.in</a>, <a href="https://indianrailways.gov.in/railwayboard/">Railway Board</a> and <a href="https://gate2027.iitm.ac.in/">gate2027.iitm.ac.in</a>.</div>
+</div></footer>
+
+<script>
+{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------------- question bank (original practice questions) ---------------- */
+const T={quant:'Quantitative aptitude',reason:'Reasoning',gk:'General awareness & science',eng:'English',civil:'Civil engineering',elec:'Electrical engineering',mech:'Mechanical engineering',gate:'GATE: maths & aptitude'};
+const Q=[
+['quant','A train 150 m long passes a pole in 10 seconds. What is its speed?',['45 km/h','54 km/h','60 km/h','15 km/h'],1,'Speed = 150/10 = 15 m/s. Multiply by 18/5: 15 × 18/5 = 54 km/h.'],
+['quant','Simple interest on ₹5,000 at 8% per annum for 3 years is:',['₹1,000','₹1,200','₹1,260','₹1,500'],1,'SI = P·R·T/100 = 5000 × 8 × 3 / 100 = ₹1,200.'],
+['quant','If 20% of a number is 50, the number is:',['200','250','300','100'],1,'0.2x = 50, so x = 250.'],
+['quant','The LCM of 12, 18 and 30 is:',['90','120','180','360'],2,'12 = 2²·3, 18 = 2·3², 30 = 2·3·5. LCM = 2²·3²·5 = 180.'],
+['quant','A can finish a work in 12 days and B in 18 days. Together they finish it in:',['7.2 days','7.5 days','6 days','15 days'],0,'1/12 + 1/18 = 5/36 per day, so 36/5 = 7.2 days.'],
+['quant','An article bought for ₹400 is sold for ₹460. The profit percent is:',['12%','13%','15%','16%'],2,'Profit = 60. 60/400 × 100 = 15%.'],
+['quant','Two numbers are in the ratio 3 : 5 and their sum is 64. The larger number is:',['24','36','40','48'],2,'Total parts 8, so one part = 8. Larger = 5 × 8 = 40.'],
+['quant','Compound interest on ₹10,000 at 10% per annum for 2 years (compounded yearly) is:',['₹2,000','₹2,100','₹2,200','₹2,010'],1,'Amount = 10000 × 1.1² = 12,100. CI = ₹2,100.'],
+['quant','√1764 = ?',['38','42','44','46'],1,'42 × 42 = 1764.'],
+['quant','The average of the first 10 natural numbers is:',['5','5.5','6','10'],1,'Sum = 55, average = 55/10 = 5.5.'],
+['reason','Find the next term: 2, 6, 12, 20, 30, ?',['40','42','44','36'],1,'Differences are 4, 6, 8, 10, 12, so 30 + 12 = 42. (Each term is n(n+1).)'],
+['reason','If CAT is coded as DBU, then DOG is coded as:',['EPH','EOH','FPH','DPH'],0,'Each letter moves one place forward: D→E, O→P, G→H.'],
+['reason','Find the odd one out: 121, 144, 169, 196, 210',['144','169','196','210'],3,'All others are perfect squares (11², 12², 13², 14²); 210 is not.'],
+['reason','Facing north, you turn right, then right again, then left. Which way are you facing now?',['North','South','East','West'],2,'North → East → South → (left) East.'],
+['reason','A is B\'s brother, C is A\'s mother and D is C\'s father. How is D related to B?',['Father','Grandfather','Uncle','Brother'],1,'D is the father of B\'s mother, so D is B\'s (maternal) grandfather.'],
+['reason','Doctor : Hospital :: Teacher : ?',['Student','School','Book','Class test'],1,'The place where each works.'],
+['gk','The SI unit of electric current is:',['Volt','Ohm','Ampere','Watt'],2,'Ampere (A) is one of the seven SI base units.'],
+['gk','Which vitamin does the skin make when exposed to sunlight?',['Vitamin A','Vitamin C','Vitamin D','Vitamin K'],2,'UV-B light helps skin synthesise vitamin D.'],
+['gk','The Constitution of India came into force on:',['15 August 1947','26 November 1949','26 January 1950','2 October 1950'],2,'Adopted 26 Nov 1949, in force from 26 Jan 1950 (Republic Day).'],
+['gk','The largest planet in the solar system is:',['Saturn','Jupiter','Neptune','Earth'],1,'Jupiter is the largest planet.'],
+['gk','The pH of pure water at 25 °C is:',['0','5','7','14'],2,'Pure water is neutral, pH 7.'],
+['gk','Article 21 of the Indian Constitution deals with:',['Equality before law','Protection of life and personal liberty','Freedom of religion','Right to education only'],1,'Article 21: no person shall be deprived of life or personal liberty except by procedure established by law.'],
+['gk','India\'s first passenger train (1853) ran between:',['Howrah and Hooghly','Bori Bunder and Thane','Madras and Arcot','Delhi and Agra'],1,'On 16 April 1853, between Bori Bunder (Bombay) and Thane.'],
+['gk','The chemical formula of common salt is:',['KCl','NaCl','Na₂CO₃','CaCl₂'],1,'Sodium chloride, NaCl.'],
+['gk','"The Discovery of India" was written by:',['Mahatma Gandhi','Jawaharlal Nehru','B. R. Ambedkar','Rabindranath Tagore'],1,'Written by Jawaharlal Nehru in Ahmednagar Fort prison, 1942–46.'],
+['eng','Choose the synonym of "Abundant":',['Scarce','Plentiful','Rare','Narrow'],1,'Abundant means existing in large quantity: plentiful.'],
+['eng','Choose the antonym of "Ancient":',['Old','Antique','Modern','Historic'],2,'Ancient is the opposite of modern.'],
+['eng','One word for "a person who knows everything":',['Omnipresent','Omnipotent','Omniscient','Optimist'],2,'Omniscient = all-knowing.'],
+['eng','Choose the correctly spelt word:',['Accomodation','Acommodation','Accommodation','Accommadation'],2,'Accommodation: double c and double m.'],
+['civil','The standard modular brick size in India is:',['19 × 9 × 9 cm','23 × 11 × 7 cm','20 × 10 × 10 cm','25 × 12 × 8 cm'],0,'Modular brick 19 × 9 × 9 cm (20 × 10 × 10 cm with mortar).'],
+['civil','The initial setting time of ordinary Portland cement should not be less than:',['10 minutes','30 minutes','60 minutes','600 minutes'],1,'IS code: initial setting time ≥ 30 min; final ≤ 600 min.'],
+['civil','The slump test of concrete measures its:',['Strength','Workability','Durability','Water absorption'],1,'Slump test is a field test for workability.'],
+['civil','Maximum bending moment of a simply supported beam of span L with UDL w per metre:',['wL²/2','wL²/4','wL²/8','wL²/12'],2,'At mid-span, M = wL²/8.'],
+['civil','For an isotropic linear elastic material, Poisson\'s ratio cannot exceed:',['0.25','0.33','0.5','1.0'],2,'Above 0.5 the bulk modulus would be negative; 0.5 means incompressible.'],
+['elec','Three 6 Ω resistors connected in parallel have an equivalent resistance of:',['18 Ω','6 Ω','3 Ω','2 Ω'],3,'Equal resistors in parallel: R/n = 6/3 = 2 Ω.'],
+['elec','Synchronous speed of a 4-pole motor on a 50 Hz supply is:',['750 rpm','1000 rpm','1500 rpm','3000 rpm'],2,'Ns = 120f/P = 120 × 50 / 4 = 1500 rpm.'],
+['elec','The power factor of a purely inductive circuit is:',['Zero','0.5','0.707','Unity'],0,'Current lags voltage by 90°, cos 90° = 0.'],
+['elec','A transformer works on the principle of:',['Self induction','Mutual induction','Electrostatic induction','Magnetostriction'],1,'Flux from the primary links the secondary: mutual induction.'],
+['elec','The SI unit of magnetic flux is:',['Tesla','Weber','Henry','Gauss'],1,'Weber (Wb). Tesla is flux density (Wb/m²).'],
+['mech','Carnot efficiency of an engine working between 500 K and 300 K is:',['40%','60%','33%','50%'],0,'η = 1 − T₂/T₁ = 1 − 300/500 = 0.4.'],
+['mech','The Otto cycle consists of:',['Two isothermal and two adiabatic processes','Two adiabatic and two constant-volume processes','Two adiabatic and two constant-pressure processes','Two isobaric and two isochoric processes'],1,'Isentropic compression, heat addition at constant volume, isentropic expansion, heat rejection at constant volume.'],
+['mech','Hardness measured with a square-based diamond pyramid indenter is the:',['Brinell test','Rockwell test','Vickers test','Shore test'],2,'Vickers uses a 136° diamond pyramid.'],
+['mech','Bernoulli\'s equation is based on the conservation of:',['Mass','Momentum','Energy','Angular momentum'],2,'It is an energy balance along a streamline.'],
+['mech','Moment of inertia of a rectangle (b × h) about its centroidal axis parallel to b is:',['bh²/6','bh³/12','b³h/12','bh³/3'],1,'I = bh³/12 about the centroidal axis parallel to the base.'],
+['gate','The determinant of the matrix [[2, 1], [4, 3]] is:',['2','10','−2','6'],0,'2·3 − 1·4 = 2.'],
+['gate','The rank of a 3 × 3 matrix whose every entry is 1 is:',['0','1','2','3'],1,'All rows are identical, so only one is independent.'],
+['gate','d/dx (x² eˣ) = ?',['2x eˣ','x² eˣ','eˣ(x² + 2x)','eˣ(2x + 1)'],2,'Product rule: 2x eˣ + x² eˣ.'],
+['gate','A fair coin is tossed twice. The probability of at least one head is:',['1/4','1/2','3/4','1'],2,'1 − P(no head) = 1 − 1/4 = 3/4.'],
+['gate','The Laplace transform of the unit step u(t) is:',['1','s','1/s','1/s²'],2,'∫₀^∞ e^(−st) dt = 1/s.'],
+['gate','Choose the word that best fits: "The evidence was so ___ that no one could dispute it."',['tenuous','ambiguous','incontrovertible','sparse'],2,'Incontrovertible = impossible to deny or dispute.'],
+].map(([t,q,o,a,e],i)=>({id:i,t,q,o,a,e}));
+
+/* ---------------- exams ---------------- */
+const EX={
+railway:{name:'Railway (RRB) exams',short:'Railway',tags:['NTPC','Group D','ALP','RRB JE'],topics:['quant','reason','gk'],neg:1/3,
+ desc:'Railway Recruitment Boards hold computer-based tests (CBT) for NTPC, Group D (Level 1), Assistant Loco Pilot, Technician and Junior Engineer posts. Speed in maths and reasoning plus strong general science and current affairs decide the cut-off.',
+ pat:[['RRB NTPC CBT-1','100','90 min','Maths 30 · Reasoning 30 · General awareness 40','−1/3'],['RRB Group D CBT','100','90 min','Science 25 · Maths 25 · Reasoning 30 · GA & current affairs 20','−1/3'],['RRB JE CBT-1','100','90 min','Maths 30 · Reasoning 25 · GA 15 · General science 30','−1/3']],
+ syl:['Number system','Percentage','Ratio','Time & work','Speed & distance','SI & CI','Series','Coding-decoding','Blood relations','Physics','Chemistry','Biology','Static GK','Current affairs','Railway history'],
+ off:[['Railway Board (Ministry of Railways)','https://indianrailways.gov.in/railwayboard/'],['RRB Chandigarh (one of the regional RRBs)','https://www.rrbcdg.gov.in/']],
+ notes:[['Speed tricks',['km/h → m/s: multiply by 5/18; m/s → km/h: × 18/5','Train crossing a pole: time = train length / speed','Two trains, opposite directions: add speeds; same direction: subtract','Average speed for equal distances: 2xy/(x + y)']],
+  ['Percent ↔ fraction',['1/8 = 12.5%, 1/6 = 16.67%, 1/12 = 8.33%','Successive change a% and b%: a + b + ab/100','Profit% = profit / CP × 100']],
+  ['General science quick facts',['Newton\'s 2nd law: F = ma','Power: P = W/t, unit watt','Ohm\'s law: V = IR','Photosynthesis needs CO₂, water, light; releases O₂']],
+  ['Railway GK',['First passenger train: 16 April 1853, Bori Bunder to Thane','Railway zones are headed by General Managers','Railway Board is the apex body under the Ministry of Railways']]]},
+ssc:{name:'SSC exams',short:'SSC',tags:['CGL','CHSL','MTS','CPO','JE'],topics:['quant','reason','gk','eng'],neg:1/4,
+ desc:'The Staff Selection Commission recruits for central government Group B and C posts through CGL, CHSL, MTS, CPO, GD and JE. Tier-1 is a 60-minute speed test, so accuracy with shortcuts matters most.',
+ pat:[['SSC CGL Tier-1','100 (200 marks)','60 min','Reasoning 25 · GA 25 · Quant 25 · English 25','−0.5 per question'],['SSC CHSL Tier-1','100 (200 marks)','60 min','Reasoning 25 · GA 25 · Quant 25 · English 25','−0.5 per question'],['SSC JE Paper-1','200','120 min','Reasoning 50 · GA 50 · Engineering 100','See notification']],
+ syl:['Algebra','Geometry','Trigonometry','Mensuration','Data interpretation','Analogy','Syllogism','Reading comprehension','Error spotting','Idioms','Polity','History','Geography','Economy','Static GK'],
+ off:[['Staff Selection Commission','https://ssc.gov.in/']],
+ notes:[['Algebra identities',['(a + b)² = a² + 2ab + b²','a³ + b³ = (a + b)(a² − ab + b²)','If x + 1/x = k, then x² + 1/x² = k² − 2']],
+  ['Trigonometry values',['sin 30° = 1/2, sin 45° = 1/√2, sin 60° = √3/2','sin²θ + cos²θ = 1','sec²θ − tan²θ = 1']],
+  ['English scoring',['Learn 10 one-word substitutions daily','Subject–verb agreement causes most error-spotting questions','Read the whole sentence before choosing a fill-in']],
+  ['Polity essentials',['Fundamental Rights: Articles 12–35','DPSP: Articles 36–51','Fundamental Duties: Article 51A']]]},
+'je-ae':{name:'JE & AE engineering exams',short:'JE / AE',tags:['SSC JE','RRB JE','State JE','State PSC AE'],topics:['civil','elec','mech','reason','gk'],neg:1/3,
+ desc:'Junior Engineer and Assistant Engineer exams test your diploma or degree core subject along with reasoning and general awareness. AE posts are filled through state public service commissions, and patterns vary by state.',
+ pat:[['SSC JE Paper-1','200','120 min','Reasoning 50 · GA 50 · Engineering (Civil / Electrical / Mechanical) 100','See notification'],['RRB JE CBT-2','150','120 min','GA, physics & chemistry, computer basics, environment, technical abilities','−1/3'],['State PSC AE','Varies','Varies','Usually objective engineering + GS, then mains or interview','Varies by state']],
+ syl:['Building materials','RCC','Surveying','Soil mechanics','Fluid mechanics','Circuits','Machines','Power systems','Measurements','Thermodynamics','Strength of materials','Theory of machines','Production'],
+ off:[['SSC (SSC JE)','https://ssc.gov.in/'],['Railway Board (RRB JE)','https://indianrailways.gov.in/railwayboard/']],
+ notes:[['Civil formulas',['Max BM, simply supported + UDL: wL²/8; central point load: WL/4','Cantilever + UDL: wL²/2 at the fixed end','OPC setting time: initial ≥ 30 min, final ≤ 600 min','Modular brick: 19 × 9 × 9 cm']],
+  ['Electrical formulas',['Synchronous speed Ns = 120f/P','Power P = VI cos φ; 3-phase P = √3 VL IL cos φ','Transformer EMF: E = 4.44 f N Φm','Slip s = (Ns − N)/Ns']],
+  ['Mechanical formulas',['Carnot η = 1 − T₂/T₁','Otto η = 1 − 1/r^(γ−1)','I (rectangle) = bh³/12; I (circle) = πd⁴/64','Euler buckling P = π²EI/Le²']],
+  ['How to score',['Revise standard values (IS codes, constants) weekly','Solve numericals with units written out','Core section has the most marks: give it 60% of study time']]]},
+gate:{name:'GATE',short:'GATE',tags:['GATE 2027','IIT Madras','PSU recruitment','M.Tech'],topics:['gate','civil','elec','mech'],neg:1/3,
+ desc:'GATE is used for M.Tech/PhD admissions and by many PSUs for recruitment. GATE 2027 is organised by IIT Madras, with exams on 6, 7, 13, 14, 20 and 21 February 2027.',
+ pat:[['GATE (each paper)','65 (100 marks)','3 hours','General aptitude 15 marks · Engineering maths & core subject 85 marks','MCQ: −1/3 (1-mark), −2/3 (2-mark); none for MSQ & NAT']],
+ syl:['Linear algebra','Calculus','Differential equations','Probability','Numerical methods','Verbal aptitude','Quantitative aptitude','Analytical aptitude','Spatial aptitude','Your core branch'],
+ off:[['GATE 2027 (IIT Madras)','https://gate2027.iitm.ac.in/'],['GATE 2026 (IIT Guwahati)','https://gate2026.iitg.ac.in/']],
+ notes:[['Question types',['MCQ: one correct option, negative marking','MSQ: one or more correct, no negative, no partial marks','NAT: type a number, no negative marking']],
+  ['Engineering maths',['Rank = number of independent rows','Sum of eigenvalues = trace; product = determinant','Laplace: L{1} = 1/s, L{e^(at)} = 1/(s − a)','P(at least one) = 1 − P(none)']],
+  ['Smart strategy',['General aptitude 15 marks: easiest marks on the paper','Attempt NAT and MSQ freely: no negative marking','Solve the last 10 years of official papers on the GATE site']],
+  ['Important dates',['Exam days: 6, 7, 13, 14, 20, 21 Feb 2027','Official site: gate2027.iitm.ac.in','Dates can change: check the site\'s notices']]]}
+};
+
+/* ---------------- routing ---------------- */
+const views={home:'home',railway:'exam',ssc:'exam','je-ae':'exam',gate:'exam',mock:'mock',papers:'papers'};
+let curEx='railway';
+const route=()=>{const h=location.hash.slice(1)||'home',v=views[h]||'home';
+  $$('[data-v]').forEach(s=>s.hidden=s.dataset.v!==v);
+  $$('#links a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+(views[h]?h:'home')));
+  if(v==='exam')renderExam(h);scrollTo(0,0)};
+addEventListener('hashchange',route);
+
+/* ---------------- clock & countdown ---------------- */
+const GATE=new Date('2027-02-06T09:30:00+05:30');
+const tick=()=>{const n=new Date();
+  $('#clock').textContent='IST '+n.toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour12:false});
+  let d=Math.max(0,GATE-n)/1000;const p=[Math.floor(d/86400),Math.floor(d%86400/3600),Math.floor(d%3600/60),Math.floor(d%60)];
+  $$('#cd b').forEach((b,i)=>b.textContent=String(p[i]).padStart(2,'0'))};
+setInterval(tick,1000);tick();
+
+/* live OMR demo */
+const omr=$('#omrdemo');omr.innerHTML=Array.from({length:10},(_,i)=>`<div class="row"><i>${i+1}</i>${'ABCD'.split('').map(l=>`<span class="bub">${l}</span>`).join('')}</div>`).join('');
+let oi=0;setInterval(()=>{const r=omr.children[oi%10];if(oi%10===0)$$('#omrdemo .bub').forEach(b=>b.classList.remove('f'));r.children[1+((oi*7+3)%4)].classList.add('f');oi++},700);
+
+/* ---------------- home ---------------- */
+$('#excards').innerHTML=Object.entries(EX).map(([k,e])=>`<a class="card ex" href="#${k}"><h3>${e.name}</h3><div class="tg">${e.tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div><span style="color:var(--mut);font-size:14px">${Q.filter(q=>e.topics.includes(q.t)).length} practice questions · ${e.notes.length} note sets</span></a>`).join('')+`<a class="card ex" href="#papers" style="border-color:var(--red)"><h3>Previous papers</h3><div class="tg"><span class="chip r">Official sources</span><span class="chip r">Practice sets</span></div><span style="color:var(--mut);font-size:14px">Where to download real papers, plus PYQ-style sets</span></a>`;
+
+const qcard=(el,q,onDone)=>{el.innerHTML=`<span class="chip r">${T[q.t]}</span><p class="qtext" style="margin:12px 0 0">${esc(q.q)}</p><div class="opts">${q.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="bub">${'ABCD'[i]}</span>${esc(o)}</button>`).join('')}</div><div class="exp" hidden></div>`;
+  el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;el.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;x.classList.toggle('ok',j===q.a);if(j===i&&i!==q.a)x.classList.add('no');if(j===i)x.classList.add('sel')});
+   const ex=el.querySelector('.exp');ex.hidden=false;ex.innerHTML=`<b>${i===q.a?'Correct!':'Not quite.'}</b> Answer: ${'ABCD'[q.a]}. ${esc(q.e)}`;onDone&&onDone()})};
+const day=Math.floor((Date.now()+19800000)/86400000);
+qcard($('#qod'),Q[day%Q.length]);
+
+const NOTES=Object.values(EX).flatMap(e=>e.notes.map(([h,l])=>({h:`${e.short}: ${h}`,b:l.join(' · ')})));
+$('#q').oninput=e=>{const s=e.target.value.trim().toLowerCase();if(s.length<2){$('#hits').innerHTML='';return}
+  const r=[...NOTES.filter(n=>(n.h+n.b).toLowerCase().includes(s)).map(n=>`<div class="hit"><b>${esc(n.h)}</b>${esc(n.b)}</div>`),
+   ...Q.filter(q=>(q.q+q.e+q.o.join(' ')).toLowerCase().includes(s)).map(q=>`<div class="hit"><b>${esc(q.q)}</b>Answer: ${esc(q.o[q.a])}. ${esc(q.e)}</div>`)];
+  $('#hits').innerHTML=r.length?r.slice(0,12).join(''):'<div class="hit">No match yet. Try a shorter word.</div>'};
+
+/* ---------------- exam page ---------------- */
+const renderExam=k=>{curEx=k;const e=EX[k];
+  $('#ename').textContent=e.name;$('#edesc').textContent=e.desc;
+  $('#etags').innerHTML=e.tags.map(t=>`<span class="chip">${t}</span>`).join('');
+  $('#epat').innerHTML=`<div class="scroll"><table class="stack"><thead><tr><th>Paper</th><th>Questions</th><th>Time</th><th>Sections</th><th>Negative</th></tr></thead><tbody>${e.pat.map(r=>`<tr><td><b>${r[0]}</b></td><td class="n">${r[1]}</td><td class="n">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</tbody></table></div>`;
+  $('#esyl').innerHTML=e.syl.map(s=>`<span class="chip">${s}</span>`).join('');
+  $('#eoff').innerHTML=e.off.map(([n,u])=>`<div><a href="${u}" target="_blank" rel="noopener">${n}</a></div>`).join('');
+  $('#enotes').innerHTML=e.notes.map(([h,l])=>`<div class="card"><h3>${h}</h3><ul>${l.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')};
+$('#epractice').onclick=()=>{$('#mex').value=curEx;$('#mn').value='10';location.hash='mock';setTimeout(start,50)};
+
+/* ---------------- mock test ---------------- */
+$('#mex').innerHTML=Object.entries(EX).map(([k,e])=>`<option value="${k}">${e.name}</option>`).join('');
+const negTxt=()=>{const e=EX[$('#mex').value];$('#mneg').textContent=`Marking: +1 for correct, −${e.neg===1/3?'1/3':'1/4'} for wrong, 0 for unattempted. Topics: ${e.topics.map(t=>T[t]).join(', ')}.`;
+  const b=store.get('nk-best',{})[$('#mex').value];$('#best').textContent=b?`Your best here: ${b.s.toFixed(2)} / ${b.n} (${b.d})`:''};
+$('#mex').onchange=negTxt;negTxt();
+let S=null,timer=null;
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const start=(pool)=>{const k=$('#mex').value,e=EX[k];let qs=pool||shuffle(Q.filter(q=>e.topics.includes(q.t)));qs=qs.slice(0,+$('#mn').value);
+  S={k,e,qs,ans:Array(qs.length).fill(null),mk:Array(qs.length).fill(false),cur:0,left:qs.length*+$('#mt').value,total:qs.length*+$('#mt').value,t0:Date.now()};
+  $('#setup').hidden=true;$('#result').hidden=true;$('#test').hidden=false;drawTest();
+  clearInterval(timer);timer=setInterval(()=>{S.left--;updTimer();if(S.left<=0)finish()},1000)};
+const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+const updTimer=()=>{const t=$('#tm');if(!t)return;t.textContent=fmt(Math.max(0,S.left));t.classList.toggle('low',S.left<=30)};
+const drawTest=()=>{const q=S.qs[S.cur],done=S.ans.filter(a=>a!==null).length;
+  $('#test').innerHTML=`<div class="test"><div class="qbox">
+   <div class="qtop"><span>Question ${S.cur+1} of ${S.qs.length}</span><span class="chip r">${T[q.t]}</span></div>
+   <p class="qtext">${esc(q.q)}</p>
+   <div class="opts">${q.o.map((o,i)=>`<button class="opt ${S.ans[S.cur]===i?'sel':''}" data-i="${i}" aria-pressed="${S.ans[S.cur]===i}"><span class="bub">${'ABCD'[i]}</span>${esc(o)}</button>`).join('')}</div>
+   <div class="qnav"><button class="btn s" id="pv" ${S.cur?'':'disabled'}>◀ Previous</button><button class="btn s" id="cl">Clear</button><button class="btn s" id="mr">${S.mk[S.cur]?'Unmark':'Mark for review'}</button><button class="btn p" id="nx">${S.cur<S.qs.length-1?'Save & next ▶':'Save'}</button></div>
+  </div><aside class="side"><div class="timer" id="tm">${fmt(S.left)}</div>
+   <div class="prog"><i style="width:${done/S.qs.length*100}%"></i></div>
+   <div style="font-size:14px;text-align:center">${done} of ${S.qs.length} answered</div>
+   <div class="pal">${S.qs.map((_,i)=>`<button data-j="${i}" class="${S.ans[i]!==null?'a':''} ${S.mk[i]?'m':''} ${i===S.cur?'c':''}" aria-label="Go to question ${i+1}">${i+1}</button>`).join('')}</div>
+   <div class="legend"><span style="--c:var(--ink)">Answered</span><span style="--c:var(--yel)">Review</span><span style="--c:var(--paper)">Not answered</span></div>
+   <button class="btn p" id="sb" style="width:100%;justify-content:center;margin-top:14px">Submit test</button></aside></div>`;
+  $$('#test .opt').forEach(b=>b.onclick=()=>{S.ans[S.cur]=+b.dataset.i;drawTest()});
+  $$('#test .pal button').forEach(b=>b.onclick=()=>{S.cur=+b.dataset.j;drawTest()});
+  $('#pv').onclick=()=>{S.cur--;drawTest()};$('#nx').onclick=()=>{if(S.cur<S.qs.length-1)S.cur++;drawTest()};
+  $('#cl').onclick=()=>{S.ans[S.cur]=null;drawTest()};$('#mr').onclick=()=>{S.mk[S.cur]=!S.mk[S.cur];drawTest()};
+  $('#sb').onclick=finish;updTimer()};
+const finish=()=>{clearInterval(timer);if(!S)return;const n=S.qs.length;let c=0,w=0;S.qs.forEach((q,i)=>{if(S.ans[i]===null)return;S.ans[i]===q.a?c++:w++});
+  const sc=c-w*S.e.neg,used=Math.min(S.total,Math.round((Date.now()-S.t0)/1000));
+  const best=store.get('nk-best',{});if(!best[S.k]||sc>best[S.k].s){best[S.k]={s:sc,n,d:new Date().toLocaleDateString('en-IN')};store.set('nk-best',best)}
+  const byT={};S.qs.forEach((q,i)=>{byT[q.t]=byT[q.t]||[0,0];byT[q.t][1]++;if(S.ans[i]===q.a)byT[q.t][0]++});
+  $('#test').hidden=true;$('#result').hidden=false;
+  $('#result').innerHTML=`<div class="card" style="margin-top:18px"><h2 style="font-size:28px">Your result: ${S.e.name}</h2>
+   <div class="res"><div><b>${sc.toFixed(2)}</b><span>score out of ${n}</span></div><div><b style="color:var(--grn)">${c}</b><span>correct</span></div><div><b style="color:var(--red)">${w}</b><span>wrong</span></div><div><b>${n-c-w}</b><span>skipped</span></div><div><b>${c+w?Math.round(c/(c+w)*100):0}%</b><span>accuracy</span></div><div><b>${fmt(used)}</b><span>time used</span></div></div>
+   <h3 style="margin-bottom:8px">By topic</h3>${Object.entries(byT).map(([t,[a,b]])=>`<div style="display:grid;grid-template-columns:minmax(0,200px) 1fr 50px;gap:10px;align-items:center;font-size:14px;margin:6px 0"><span>${T[t]}</span><div class="prog" style="margin:0"><i style="width:${a/b*100}%"></i></div><span style="text-align:right">${a}/${b}</span></div>`).join('')}
+   <div class="cta"><button class="btn p" id="again">New test</button><button class="btn s" id="retry">Retry same questions</button></div></div>
+   <h3 style="margin:26px 0 12px">Answer review</h3><div class="rev">${S.qs.map((q,i)=>{const a=S.ans[i],ok=a===q.a;return `<div class="card" style="--c:${a===null?'var(--line)':ok?'var(--grn)':'var(--red)'}"><b>${i+1}. ${esc(q.q)}</b><div style="font-size:15px;margin-top:6px">Your answer: ${a===null?'not attempted':esc(q.o[a])} · Correct: <b>${esc(q.o[q.a])}</b></div><div class="exp">${esc(q.e)}</div></div>`}).join('')}</div>`;
+  $('#again').onclick=()=>{S=null;$('#result').hidden=true;$('#setup').hidden=false;negTxt()};
+  const qs=S.qs;$('#retry').onclick=()=>start(qs);scrollTo(0,0)};
+$('#mstart').onclick=()=>start();
+
+/* ---------------- papers ---------------- */
+const P=[['SSC CGL, CHSL, MTS, CPO, JE','Staff Selection Commission: answer keys with question papers are released after each exam','https://ssc.gov.in/'],
+ ['RRB NTPC, Group D, ALP, JE','Each regional RRB website publishes answer keys and response sheets during the objection window','https://www.rrbcdg.gov.in/'],
+ ['Railway Board notices','Recruitment notices and calendars from the Ministry of Railways','https://indianrailways.gov.in/railwayboard/'],
+ ['GATE 2027','IIT Madras: brochure, mock test links, and previous question papers section','https://gate2027.iitm.ac.in/'],
+ ['GATE 2026','IIT Guwahati: GATE 2026 question papers and answer keys','https://gate2026.iitg.ac.in/']];
+$('#ptab').innerHTML=P.map(([a,b,u])=>`<tr><td><b>${a}</b></td><td>${b}</td><td><a href="${u}" target="_blank" rel="noopener">${u.replace(/^https:\/\/|\/$/g,'')}</a></td></tr>`).join('');
+const SETS=[['railway','Railway CBT style set','Maths, reasoning and science'],['ssc','SSC Tier-1 style set','Quant, reasoning, GA and English'],['je-ae','JE/AE technical set','Civil, electrical and mechanical core'],['gate','GATE aptitude & maths set','Engineering maths, GA and core']];
+$('#psets').innerHTML=SETS.map(([k,h,d])=>`<div class="card"><h3>${h}</h3><p style="color:var(--mut);margin:6px 0 12px">${d} · ${Q.filter(q=>EX[k].topics.includes(q.t)).length} questions · timed</p><button class="btn p" data-k="${k}">Attempt set</button></div>`).join('');
+$$('#psets button').forEach(b=>b.onclick=()=>{$('#mex').value=b.dataset.k;$('#mn').value='999';negTxt();location.hash='mock';setTimeout(()=>start(),50)});
+
+route();
+}
+</script>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+<style>@media(max-width:600px){.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;font-weight:700;color:var(--red);font-size:12px}}</style>
+</body>
+</html>
